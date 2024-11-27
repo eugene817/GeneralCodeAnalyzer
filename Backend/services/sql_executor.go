@@ -106,25 +106,21 @@ func AnalyzeQueryInContainer(sqlQuery, initSQL string) (string, error) {
 
 
 func ExecuteSQLWithMemoryMetrics(sqlQuery, initSQL string) (string, map[string]interface{}, error) {
-	// Выполнение initSQL и запроса
 	result, metrics, err := ExecuteSQLWithMetrics(sqlQuery, initSQL)
 	if err != nil {
 		return "", nil, err
 	}
 
-	// Измеряем использование памяти
 	memoryUsedBefore, err := MeasureMemoryUsage()
 	if err != nil {
 		log.Printf("Error measuring memory before: %v", err)
 	}
 
-	// Выполняем запрос ещё раз для подсчёта памяти после
 	memoryUsedAfter, err := MeasureMemoryUsage()
 	if err != nil {
 		log.Printf("Error measuring memory after: %v", err)
 	}
 
-	// Добавляем метрики памяти
 	metrics["memory_used_before"] = memoryUsedBefore
 	metrics["memory_used_after"] = memoryUsedAfter
 	metrics["memory_difference"] = memoryUsedAfter - memoryUsedBefore
@@ -132,7 +128,6 @@ func ExecuteSQLWithMemoryMetrics(sqlQuery, initSQL string) (string, map[string]i
 	return result, metrics, nil
 }
 
-// MeasureMemoryUsage измеряет текущее использование памяти SQLite
 func MeasureMemoryUsage() (int, error) {
 	query := "PRAGMA memory_used;"
 	result, _, err := ExecuteSQLWithMetrics(query, "")
