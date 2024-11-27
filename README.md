@@ -23,3 +23,10 @@ If you already have golang installed:
 
 Send POST request for the localhost:8090/analyze
 with sql query and sql init db
+`// incoming request
+type AnalyzeRequest struct {
+  SQLQuery string `json:"sql_query"`
+  InitSQL string `json:"init_sql"`
+}`
+
+
