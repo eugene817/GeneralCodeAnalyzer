@@ -42,7 +42,7 @@ curl -X POST http://localhost:8090/analyze \
 ```
 
 Answer
-```bash
+```json
 {
   "analysis": "QUERY PLAN\n|--SCAN employees\n|--USE TEMP B-TREE FOR GROUP BY\n`--USE TEMP B-TREE FOR ORDER BY",
   "metrics": {
