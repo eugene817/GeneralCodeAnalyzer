@@ -1,0 +1,20 @@
+{
+  "name": "generalcodeanalyzer",
+  "version": "1.0.0",
+  "description": "- This is my diploma project",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build:css": "tailwindcss build -i ./api/static/input.css -o api/static/styles.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
+  }
+}
