@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"errors"
+	"fmt"
 	"log"
-  "errors"
-  "net/http"
+	"net/http"
 
 	"github.com/eugene817/GeneralCodeAnalyzer/services"
 	"github.com/labstack/echo/v4"
@@ -21,6 +22,7 @@ type Data struct {
 	Analysis        string
 	Metrics         map[string]interface{}
 	Recommendations []string
+  LLMAnswer       string
 }
 
 
@@ -38,8 +40,9 @@ func AnalyzeData(req AnalyzeRequest) (Data, error) {
 	// SQL (not used yet)
 	_, err = services.ExecuteSQLInContainer(req.SQLQuery, req.InitSQL)
 	if err != nil {
-		return Data{}, err
+    return Data{}, err
 	}
+
 
 	// request analysis
 	analysis, err := services.AnalyzeQueryInContainer(req.SQLQuery, req.InitSQL)
@@ -50,12 +53,27 @@ func AnalyzeData(req AnalyzeRequest) (Data, error) {
 	// recomendations generation
 	recommendations := services.GenerateRecommendations(metrics, analysis, req.SQLQuery)
 
-	// making result
+  d := Data{
+		Result:          result,
+		Analysis:        analysis,
+		Metrics:         metrics,
+		Recommendations: recommendations,
+    LLMAnswer: "",
+	}
+
+  model := "codellama"
+  llmanswer, err := services.QueryOllama(GeneratePrompt(d, req.InitSQL, req.SQLQuery), model)
+  if err != nil {
+    fmt.Println("OMG!! Error in QueryOllama")    
+  }
+
+
 	return Data{
 		Result:          result,
 		Analysis:        analysis,
 		Metrics:         metrics,
 		Recommendations: recommendations,
+    LLMAnswer: llmanswer,
 	}, nil
 }
 
@@ -66,7 +84,6 @@ func AnalyzeHandlerTemplate(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		return c.String(400, "Invalid request body")
 	}
-
 
 	// executing analyzis
 	data, err := AnalyzeData(*req)
