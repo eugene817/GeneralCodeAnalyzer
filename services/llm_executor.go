@@ -15,9 +15,9 @@ type GenerateRequest struct {
 }
 
 type GenerateResponse struct {
-	Model        string `json:"model"`
-	Response     string `json:"response"`
-	DoneReason   string `json:"done_reason"`
+	Model         string `json:"model"`
+	Response      string `json:"response"`
+	DoneReason    string `json:"done_reason"`
 	TotalDuration int64  `json:"total_duration"`
 }
 

@@ -61,7 +61,8 @@ func AnalyzeData(req AnalyzeRequest) (Data, error) {
     LLMAnswer: "",
 	}
 
-  model := "codellama"
+  //model := "codellama"
+  model := "deepseek-r1:1.5b"
   llmanswer, err := services.QueryOllama(GeneratePrompt(d, req.InitSQL, req.SQLQuery), model)
   if err != nil {
     fmt.Println("OMG!! Error in QueryOllama")    

@@ -14,7 +14,6 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
-  "github.com/docker/docker/api/types"
 )
 
 
@@ -194,7 +193,7 @@ func ExecuteSQLMetricsInContainer(sqlQuery string, initSQL string) (string, erro
  
 		decoder := json.NewDecoder(stats.Body)
 		for {
-			var stat types.StatsJSON 
+			var stat container.StatsResponse
 			if err := decoder.Decode(&stat); err == io.EOF {
         log.Printf("Error decoding")
 				break
