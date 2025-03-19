@@ -4,6 +4,7 @@ import (
 	"github.com/eugene817/GeneralCodeAnalyzer/api/handlers"
 	"github.com/eugene817/GeneralCodeAnalyzer/api/templates"
 	"github.com/eugene817/GeneralCodeAnalyzer/config"
+	"github.com/eugene817/Cownets"
 	"github.com/labstack/echo/v4"
 )
 
