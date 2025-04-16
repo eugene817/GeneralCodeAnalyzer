@@ -8,8 +8,7 @@ import (
 	"github.com/eugene817/Cowdocs/container"
 )
 
-func ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
-
+func ExecutePythonInContainer(pythonCode string) (string, error) {
 	mgr, err := container.NewDockerManager()
 	if err != nil {
 		return "", fmt.Errorf("failed to create Docker manager: %v", err)
@@ -18,13 +17,12 @@ func ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
 	mng := api.NewAPI(mgr)
 
 	contanerConfig := container.ContainerConfig{
-		Image: "keinos/sqlite3",
+		Image: "python:3",
 		Cmd: []string{
 			"sh", "-c", fmt.Sprintf(`
-        echo "%s" > /tmp/init.sql &&
-        sqlite3 /tmp/test.db < /tmp/init.sql &&
-        sqlite3 /tmp/test.db "%s" > /dev/stdout
-        `, initSQL, sqlQuery),
+        echo "%s" > /tmp/script.py &&
+        python3 /tmp/script.py
+        `, pythonCode),
 		},
 		Tty: false,
 	}
@@ -37,8 +35,8 @@ func ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
 	return result, nil
 }
 
-func ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, string, error) {
-	defer timeTrack(time.Now(), "ExecuteSQLWithMetrics")
+func ExecutePythonWithMetrics(pythonCode string) (string, string, error) {
+	defer timeTrack(time.Now(), "ExecutePythonWithMetrics")
 
 	mgr, err := container.NewDockerManager()
 	if err != nil {
@@ -48,26 +46,20 @@ func ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, string, error) {
 	mng := api.NewAPI(mgr)
 
 	contanerConfig := container.ContainerConfig{
-		Image: "keinos/sqlite3",
+		Image: "python:3",
 		Cmd: []string{
 			"sh", "-c", fmt.Sprintf(`
-        echo "%s" > /tmp/init.sql &&
-        sqlite3 /tmp/test.db < /tmp/init.sql &&
-        sqlite3 /tmp/test.db "%s" > /dev/stdout
-        `, initSQL, sqlQuery),
+        echo "%s" > /tmp/script.py &&
+        python3 /tmp/script.py
+        `, pythonCode),
 		},
 		Tty: false,
 	}
 
-	result, metrics, err := mng.RunContainer(contanerConfig, true)
+	result, metrics, err := mng.RunContainer(contanerConfig, false)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to run container: %v", err)
 	}
 
 	return result, metrics, nil
-}
-
-func AnalyzeQueryInContainer(sqlQuery, initSQL string) (string, error) {
-	explainQuery := fmt.Sprintf("EXPLAIN QUERY PLAN %s;", sqlQuery)
-	return ExecuteSQLInContainer(explainQuery, initSQL)
 }

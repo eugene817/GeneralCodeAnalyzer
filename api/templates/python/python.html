@@ -1,24 +1,21 @@
 {{ block "python" . }}
-    <!-- main content -->
-    <main class="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 mt-8">
-      <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Python Analyzer</h2>
-      <form hx-post="/analyze/python" hx-target="main" hx-indicator="#loader" hx-swap="outerHTML" hx-ext="json-enc" class="space-y-4">
-        <div>
-          <label for="python_code" class="block text-lg font-medium text-gray-700">Python Code</label>
-          <textarea 
-            id="python_code" 
-            name="python_code"
-            rows="8"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm overflow-auto resize-y"
-          >print("Hello, World!")</textarea>
-        </div>
-        <div class="flex justify-end">
-          <input 
-            type="submit" 
-            value="Analyze" 
-            class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-        </div>
-      </form>
-    </main>
+<!-- main content -->
+<main class="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 mt-8">
+  <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Python Analyzer</h2>
+  <form hx-post="/analyze/python" hx-target="main" hx-indicator="#loader" hx-ext="json-enc" class="space-y-4">
+    <div>
+      <label for="python_code" class="block text-lg font-medium text-gray-700">Python Code</label>
+      <textarea id="python_code" name="python_code" rows="8"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm overflow-auto resize-y">
+def add(a, b):
+    return a + b
+print(f'Hello, World! and {add(2, 3)}')
+      </textarea>
+    </div>
+    <div class="flex justify-end">
+      <input type="submit" value="Analyze"
+        class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+    </div>
+  </form>
+</main>
 {{ end }}
-

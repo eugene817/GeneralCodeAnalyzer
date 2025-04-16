@@ -1,10 +1,8 @@
 package handlers
 
 import (
-  "encoding/json"
-
+	"encoding/json"
 )
-
 
 type AnalysisRequest struct {
 	Result          string            `json:"result"`
@@ -13,21 +11,19 @@ type AnalysisRequest struct {
 	Recommendations []string          `json:"recommendations"`
 }
 
-
 func toJson(v interface{}) (string, error) {
-    jsonData, err := json.Marshal(v)
-    if err != nil {
-        return "", err
-    }
-    return string(jsonData), nil
+	jsonData, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonData), nil
 }
 
-// GeneratePrompt создаёт текстовый prompt для нейросети на основе данных из запроса
 func GeneratePrompt(req Data, sqlQuerry, initSQL string) string {
-  metricsJson, _ := json.Marshal(req.Metrics)
-  recommendationsJson, _ := json.Marshal(req.Recommendations)
+	metricsJson, _ := json.Marshal(req.Metrics)
+	recommendationsJson, _ := json.Marshal(req.Recommendations)
 
-  return `
+	return `
   Analyze the following SQL query and its result, give complicated answers with more recommendations:
 
   SQL Query:
@@ -41,6 +37,27 @@ func GeneratePrompt(req Data, sqlQuerry, initSQL string) string {
 
   Analysis:
   ` + req.Analysis + `
+
+  Metrics:
+  ` + string(metricsJson) + `
+
+  Recommendations:
+  ` + string(recommendationsJson) + `
+  `
+}
+
+func GeneratePromptPython(req PythonData, pythonCode string) string {
+	metricsJson, _ := json.Marshal(req.Metrics)
+	recommendationsJson, _ := json.Marshal(req.Recommendations)
+
+	return `
+  Analyze the following python code giving recommendations
+
+  Python Code:
+  ` + pythonCode + `
+
+  Result:
+  ` + req.Result + `
 
   Metrics:
   ` + string(metricsJson) + `
