@@ -1,0 +1,37 @@
+{{ block "base" . }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ .Title }}</title>
+  <link href="/static/styles.css" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+  <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+
+</head>
+<body class="bg-gray-100">
+     <!-- Header with Navigation Buttons -->
+      <header class="w-full bg-indigo-600 py-4">
+        <div class="container mx-auto flex justify-between items-center">
+          <h1 hx-get="/" hx-target="body" class="text-3xl font-bold text-white">GeneralCodeAnalyzer</h1>
+          <nav class="space-x-4">
+
+            <button hx-get="/login" hx-target="main" 
+              class="px-4 py-2 bg-green-600 text-white font-medium rounded-md transition-transform duration-200 transform hover:scale-105 hover:shadow-lg">
+              Login
+            </button>
+
+            <button hx-get="/register" hx-target="main" 
+               class="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700">
+              Register
+            </button>
+        </nav>
+        </div>
+      </header>
+  <main id="main" class="p-6">
+    {{ block "content" . }}{{ end }}
+  </main>
+</body>
+</html>
+{{ end }}
+

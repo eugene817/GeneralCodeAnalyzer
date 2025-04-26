@@ -1,0 +1,14 @@
+{{ block "login_partial" . }}
+<section class="max-w-md mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-2xl mb-4">Log In</h2>
+  {{ with .Error }}
+    <div class="text-red-600 mb-4">{{ . }}</div>
+  {{ end }}
+  <form hx-post="/login" hx-target="body" hx-target="outerHTML" hx-ext="json-enc" class="space-y-4">
+    <div><label>Username</label><input name="username" class="w-full border"/></div>
+    <div><label>Password</label><input type="password" name="password" class="w-full border"/></div>
+    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded">Log In</button>
+  </form>
+</section>
+{{ end }}
+
