@@ -2,7 +2,7 @@
 <!-- main content -->
 <main class="w-full max-w-lg bg-white shadow-lg rounded-lg p-8 mt-8">
   <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Python Analyzer</h2>
-  <form hx-post="/analyze/python" hx-target="main" hx-indicator="#loader" hx-ext="json-enc" class="space-y-4">
+  <form hx-post="/api/analyze/python" hx-target="main" hx-indicator="#loader" hx-ext="json-enc" class="space-y-4">
     <div>
       <label for="python_code" class="block text-lg font-medium text-gray-700">Python Code</label>
       <textarea id="python_code" name="python_code" rows="8"

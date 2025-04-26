@@ -1,5 +1,4 @@
 services:
-  # PostgreSQL
   db:
     image: postgres:15-alpine
     restart: always
@@ -12,17 +11,16 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  # Docker-in-Docker демон
+  # Docker-in-Docker daemon
   dind:
     image: docker:24-dind
     privileged: true
     environment:
-      # отключаем TLS, чтобы слушать незашифрованный TCP
       DOCKER_TLS_CERTDIR: ""
     volumes:
       - dind_storage:/var/lib/docker
 
-  # Ваше приложение
+  # App 
   app:
     build:
       context: .
@@ -32,7 +30,6 @@ services:
       - db
       - dind
     environment:
-      # указываем Go-клиенту контейнеров, куда звонить
       DOCKER_HOST: tcp://dind:2375
       PORT: "8080"
       DB_HOST: db
@@ -43,8 +40,13 @@ services:
       DB_TIMEZONE: Europe/Warsaw
     ports:
       - "8080:8080"
-    # НИКАКИХ томов для /var/run/docker.sock
-
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
 volumes:
   db_data:
   dind_storage:

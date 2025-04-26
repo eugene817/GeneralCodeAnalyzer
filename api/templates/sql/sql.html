@@ -14,7 +14,7 @@
 {{ end }}
 
 {{ block "form" . }}
-<form hx-post="/analyze" hx-target="main" hx-indicator="#loader" hx-ext="json-enc" class="space-y-4">
+<form hx-post="/api/analyze/sql" hx-target="main" hx-indicator="#loader" hx-ext="json-enc" class="space-y-4">
   <div>
     <label for="sql_query" class="block text-lg font-medium text-gray-700">SQL Query</label>
     <textarea 

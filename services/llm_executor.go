@@ -24,39 +24,39 @@ type GenerateResponse struct {
 func QueryOllama(prompt, model string) (string, error) {
 	url := "http://localhost:11434/api/generate"
 
-	// Формируем тело запроса
+	// Formating the request body 
 	reqBody := GenerateRequest{
 		Model:  model,
 		Stream: false,
 		Prompt: prompt,
 	}
 
-	// Сериализация в JSON
+	// Serialization of the request body
 	jsonData, err := json.Marshal(reqBody)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal request: %v", err)
 	}
 
-	// Выполняем HTTP-запрос
+	// HTTP POST request
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("failed to send request: %v", err)
 	}
 	defer resp.Body.Close()
 
-	// Читаем тело ответа
+	// Reading the response body 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("failed to read response: %v", err)
 	}
 
-	// Десериализация ответа
+	// Unmarshalling the response body 
 	var response GenerateResponse
 	if err := json.Unmarshal(body, &response); err != nil {
 		return "", fmt.Errorf("failed to unmarshal response: %v", err)
 	}
 
-	// Проверка статуса завершения
+	// Checking the response status
 	if response.DoneReason != "stop" {
 		return "", fmt.Errorf("generation did not complete successfully: %s", response.DoneReason)
 	}
