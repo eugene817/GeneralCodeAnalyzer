@@ -56,9 +56,8 @@ func main() {
   h.RegisterRoutes(e)
 
 	templates.RegisterTemplatesRoutes(e)
-
 	e.Static("/static", "./api/static")
-	port := config.GetPort()
 
+	port := config.GetPort()
 	e.Logger.Fatal(e.Start(port))
 }
