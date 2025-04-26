@@ -25,25 +25,25 @@ type Data struct {
 	LLMAnswer       string
 }
 
-func AnalyzeData(req AnalyzeRequest) (Data, error) {
+func (h *Handler) AnalyzeData(req AnalyzeRequest) (Data, error) {
 	if req.SQLQuery == "" {
 		return Data{}, errors.New("SQL Query is required")
 	}
 
 	// executing SQL with metrics
-	result, metrics, err := services.ExecuteSQLWithMetrics(req.SQLQuery, req.InitSQL)
+	result, metrics, err := h.svc.ExecuteSQLWithMetrics(req.SQLQuery, req.InitSQL)
 	if err != nil {
 		return Data{}, err
 	}
 
 	// SQL (not used yet)
-	_, err = services.ExecuteSQLInContainer(req.SQLQuery, req.InitSQL)
+	_, err = h.svc.ExecuteSQLInContainer(req.SQLQuery, req.InitSQL)
 	if err != nil {
 		return Data{}, err
 	}
 
 	// request analysis
-	analysis, err := services.AnalyzeQueryInContainer(req.SQLQuery, req.InitSQL)
+	analysis, err := h.svc.AnalyzeQueryInContainer(req.SQLQuery, req.InitSQL)
 	if err != nil {
 		return Data{}, err
 	}
@@ -75,7 +75,7 @@ func AnalyzeData(req AnalyzeRequest) (Data, error) {
 	}, nil
 }
 
-func AnalyzeHandlerTemplate(c echo.Context) error {
+func (h *Handler) AnalyzeHandlerTemplate(c echo.Context) error {
 	// reading request
 	req := new(AnalyzeRequest)
 	if err := c.Bind(req); err != nil {
@@ -83,7 +83,7 @@ func AnalyzeHandlerTemplate(c echo.Context) error {
 	}
 
 	// executing analyzis
-	data, err := AnalyzeData(*req)
+	data, err := h.AnalyzeData(*req)
 	if err != nil {
 		log.Printf("Error: %v", err)
 		return c.JSON(400, echo.Map{"ExecutionError": err.Error()})
@@ -93,7 +93,7 @@ func AnalyzeHandlerTemplate(c echo.Context) error {
 	return c.Render(http.StatusOK, "sql_analytics", data)
 }
 
-func AnalyzeHandlerAPI(c echo.Context) error {
+func (h *Handler) AnalyzeHandlerAPI(c echo.Context) error {
 	// reading request
 	req := new(AnalyzeRequest)
 	if err := c.Bind(req); err != nil {
@@ -101,7 +101,7 @@ func AnalyzeHandlerAPI(c echo.Context) error {
 	}
 
 	// executing analyzis
-	data, err := AnalyzeData(*req)
+	data, err := h.AnalyzeData(*req)
 	if err != nil {
 		log.Printf("Error: %v", err)
 		return c.JSON(400, echo.Map{"ExecutionError": err.Error()})

@@ -23,19 +23,19 @@ type PythonData struct {
 	LLMAnswer       string
 }
 
-func PythonAnalyzeData(req PythonAnalyzeRequest) (PythonData, error) {
+func (h *Handler) PythonAnalyzeData(req PythonAnalyzeRequest) (PythonData, error) {
 	if req.PythonCode == "" {
 		return PythonData{}, errors.New("Python code is empty")
 	}
 
 	// executing SQL with metrics
-	result, metrics, err := services.ExecutePythonWithMetrics(req.PythonCode)
+	result, metrics, err := h.svc.ExecutePythonWithMetrics(req.PythonCode)
 	if err != nil {
 		return PythonData{}, err
 	}
 
 	// SQL (not used yet)
-	_, err = services.ExecutePythonInContainer(req.PythonCode)
+	_, err = h.svc.ExecutePythonInContainer(req.PythonCode)
 	if err != nil {
 		return PythonData{}, err
 	}
@@ -65,7 +65,7 @@ func PythonAnalyzeData(req PythonAnalyzeRequest) (PythonData, error) {
 	}, nil
 }
 
-func AnalyzeHandlerTemplatePython(c echo.Context) error {
+func (h *Handler) AnalyzeHandlerTemplatePython(c echo.Context) error {
 	// reading request
 	req := new(PythonAnalyzeRequest)
 	if err := c.Bind(req); err != nil {
@@ -73,7 +73,7 @@ func AnalyzeHandlerTemplatePython(c echo.Context) error {
 	}
 
 	// executing analyzis
-	data, err := PythonAnalyzeData(*req)
+	data, err := h.PythonAnalyzeData(*req)
 	if err != nil {
 		log.Printf("Error: %v", err)
 		return c.JSON(400, echo.Map{"ExecutionError": err.Error()})

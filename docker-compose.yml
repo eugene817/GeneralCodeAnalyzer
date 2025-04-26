@@ -1,0 +1,51 @@
+services:
+  # PostgreSQL
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dbpass
+      POSTGRES_DB: gca
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # Docker-in-Docker демон
+  dind:
+    image: docker:24-dind
+    privileged: true
+    environment:
+      # отключаем TLS, чтобы слушать незашифрованный TCP
+      DOCKER_TLS_CERTDIR: ""
+    volumes:
+      - dind_storage:/var/lib/docker
+
+  # Ваше приложение
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      - db
+      - dind
+    environment:
+      # указываем Go-клиенту контейнеров, куда звонить
+      DOCKER_HOST: tcp://dind:2375
+      PORT: "8080"
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD: dbpass
+      DB_NAME: gca
+      DB_PORT: "5432"
+      DB_TIMEZONE: Europe/Warsaw
+    ports:
+      - "8080:8080"
+    # НИКАКИХ томов для /var/run/docker.sock
+
+volumes:
+  db_data:
+  dind_storage:
+

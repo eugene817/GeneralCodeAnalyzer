@@ -4,18 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/eugene817/Cowdocs/api"
 	"github.com/eugene817/Cowdocs/container"
 )
 
-func ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
-
-	mgr, err := container.NewDockerManager()
-	if err != nil {
-		return "", fmt.Errorf("failed to create Docker manager: %v", err)
-	}
-
-	mng := api.NewAPI(mgr)
+func (s *Service) ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
 
 	contanerConfig := container.ContainerConfig{
 		Image: "keinos/sqlite3",
@@ -29,7 +21,7 @@ func ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
 		Tty: false,
 	}
 
-	result, _, err := mng.RunContainer(contanerConfig, false)
+	result, _, err := s.apiSvc.RunContainer(contanerConfig, false)
 	if err != nil {
 		return "", fmt.Errorf("failed to run container: %v", err)
 	}
@@ -37,15 +29,9 @@ func ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
 	return result, nil
 }
 
-func ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, string, error) {
+func (s *Service) ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, string, error) {
 	defer timeTrack(time.Now(), "ExecuteSQLWithMetrics")
 
-	mgr, err := container.NewDockerManager()
-	if err != nil {
-		return "", "", fmt.Errorf("failed to create Docker manager: %v", err)
-	}
-
-	mng := api.NewAPI(mgr)
 
 	contanerConfig := container.ContainerConfig{
 		Image: "keinos/sqlite3",
@@ -59,7 +45,7 @@ func ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, string, error) {
 		Tty: false,
 	}
 
-	result, metrics, err := mng.RunContainer(contanerConfig, true)
+	result, metrics, err := s.apiSvc.RunContainer(contanerConfig, true)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to run container: %v", err)
 	}
@@ -67,7 +53,7 @@ func ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, string, error) {
 	return result, metrics, nil
 }
 
-func AnalyzeQueryInContainer(sqlQuery, initSQL string) (string, error) {
+func (s *Service) AnalyzeQueryInContainer(sqlQuery, initSQL string) (string, error) {
 	explainQuery := fmt.Sprintf("EXPLAIN QUERY PLAN %s;", sqlQuery)
-	return ExecuteSQLInContainer(explainQuery, initSQL)
+	return s.ExecuteSQLInContainer(explainQuery, initSQL)
 }

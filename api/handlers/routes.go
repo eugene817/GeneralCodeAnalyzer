@@ -4,13 +4,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterRoutes(e *echo.Echo) {
+func (h *Handler) RegisterRoutes(e *echo.Echo) {
 
 	e.GET("/health", HealthCheckHandler)
 
-	e.POST("/analyze", AnalyzeHandlerTemplate)
+	e.POST("/analyze", h.AnalyzeHandlerTemplate)
 
-	e.POST("/analyze/json", AnalyzeHandlerAPI)
+	e.POST("/analyze/json", h.AnalyzeHandlerAPI)
 
-	e.POST("/analyze/python", AnalyzeHandlerTemplatePython)
+	e.POST("/analyze/python", h.AnalyzeHandlerTemplatePython)
 }

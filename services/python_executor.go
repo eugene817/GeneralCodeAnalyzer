@@ -4,18 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/eugene817/Cowdocs/api"
 	"github.com/eugene817/Cowdocs/container"
 )
 
-func ExecutePythonInContainer(pythonCode string) (string, error) {
-	mgr, err := container.NewDockerManager()
-	if err != nil {
-		return "", fmt.Errorf("failed to create Docker manager: %v", err)
-	}
-
-	mng := api.NewAPI(mgr)
-
+func (s *Service) ExecutePythonInContainer(pythonCode string) (string, error) {
 	contanerConfig := container.ContainerConfig{
 		Image: "python:3",
 		Cmd: []string{
@@ -27,7 +19,7 @@ func ExecutePythonInContainer(pythonCode string) (string, error) {
 		Tty: false,
 	}
 
-	result, _, err := mng.RunContainer(contanerConfig, false)
+	result, _, err := s.apiSvc.RunContainer(contanerConfig, false)
 	if err != nil {
 		return "", fmt.Errorf("failed to run container: %v", err)
 	}
@@ -35,15 +27,8 @@ func ExecutePythonInContainer(pythonCode string) (string, error) {
 	return result, nil
 }
 
-func ExecutePythonWithMetrics(pythonCode string) (string, string, error) {
+func (s *Service) ExecutePythonWithMetrics(pythonCode string) (string, string, error) {
 	defer timeTrack(time.Now(), "ExecutePythonWithMetrics")
-
-	mgr, err := container.NewDockerManager()
-	if err != nil {
-		return "", "", fmt.Errorf("failed to create Docker manager: %v", err)
-	}
-
-	mng := api.NewAPI(mgr)
 
 	contanerConfig := container.ContainerConfig{
 		Image: "python:3",
@@ -56,7 +41,7 @@ func ExecutePythonWithMetrics(pythonCode string) (string, string, error) {
 		Tty: false,
 	}
 
-	result, metrics, err := mng.RunContainer(contanerConfig, false)
+	result, metrics, err := s.apiSvc.RunContainer(contanerConfig, false)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to run container: %v", err)
 	}
