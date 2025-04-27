@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
   </head>
   <body class="bg-gray-100">
-    <!-- Header with Navigation Buttons -->
+           <!-- Header with Navigation Buttons -->
       <header class="w-full bg-indigo-600 py-4">
         <div class="container mx-auto flex justify-between items-center">
           <h1 hx-get="/" hx-target="body" class="text-3xl font-bold text-white">GeneralCodeAnalyzer</h1>
@@ -25,10 +25,10 @@
                class="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700">
               Python Analyzer
             </button>
-            <a href="/api/c" 
+            <button hx-get="/api/c" hx-target="main" 
                class="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700">
               C Analyzer
-            </a>
+            </button>
           </nav>
         </div>
       </header>

@@ -66,3 +66,25 @@ func GeneratePromptPython(req PythonData, pythonCode string) string {
   ` + string(recommendationsJson) + `
   `
 }
+
+
+func GeneratePromptC(req CData, CCode string) string {
+	metricsJson, _ := json.Marshal(req.Metrics)
+	recommendationsJson, _ := json.Marshal(req.Recommendations)
+
+	return `
+  Analyze the following C code giving recommendations
+
+  Python Code:
+  ` + CCode + `
+
+  Result:
+  ` + req.Result + `
+
+  Metrics:
+  ` + string(metricsJson) + `
+
+  Recommendations:
+  ` + string(recommendationsJson) + `
+  `
+}

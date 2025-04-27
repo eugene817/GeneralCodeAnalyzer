@@ -37,4 +37,8 @@ func RegisterTemplatesRoutes(e *echo.Echo) {
   r.GET("/python", func(c echo.Context) error {
     return c.Render(http.StatusOK, "python", nil)
   })
+
+  r.GET("/c", func(c echo.Context) error {
+    return c.Render(http.StatusOK, "c", nil)
+  })
 }

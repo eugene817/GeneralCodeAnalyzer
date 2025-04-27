@@ -30,6 +30,18 @@ func GenerateRecommendationsPython(metrics, pythonCode string) []string {
 	return recommendations
 }
 
+
+func GenerateRecommendationsC(metrics, CCode string) []string {
+
+	recommendations := []string{}
+
+	if strings.Contains(strings.ToUpper(CCode), "SELECT *") {
+		recommendations = append(recommendations, "Avoid using SELECT *; specify the columns explicitly.")
+	}
+
+	return recommendations
+}
+
 func contains(s, substr string) bool {
 	return strings.Contains(strings.ToUpper(s), strings.ToUpper(substr))
 }

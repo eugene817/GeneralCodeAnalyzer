@@ -7,20 +7,23 @@ import (
 	"github.com/eugene817/Cowdocs/container"
 )
 
-func (s *Service) ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
-
-	contanerConfig := container.ContainerConfig{
-		Image: "keinos/sqlite3",
-		Cmd: []string{
-			"sh", "-c", fmt.Sprintf(`
+func makeConfigSQL(sqlQuery, initSQL string) container.ContainerConfig {
+  return container.ContainerConfig{
+    Image: "keinos/sqlite3",
+    Cmd: []string{
+      "sh", "-c", fmt.Sprintf(`
         echo "%s" > /tmp/init.sql &&
         sqlite3 /tmp/test.db < /tmp/init.sql &&
         sqlite3 /tmp/test.db "%s" > /dev/stdout
         `, initSQL, sqlQuery),
-		},
-		Tty: false,
-	}
+    },
+    Tty: false,
+  }
+}
 
+func (s *Service) ExecuteSQLInContainer(sqlQuery string, initSQL string) (string, error) {
+
+	contanerConfig := makeConfigSQL(sqlQuery, initSQL)
 	result, _, err := s.apiSvc.RunContainer(contanerConfig, false)
 	if err != nil {
 		return "", fmt.Errorf("failed to run container: %v", err)
@@ -33,18 +36,7 @@ func (s *Service) ExecuteSQLWithMetrics(sqlQuery, initSQL string) (string, strin
 	defer timeTrack(time.Now(), "ExecuteSQLWithMetrics")
 
 
-	contanerConfig := container.ContainerConfig{
-		Image: "keinos/sqlite3",
-		Cmd: []string{
-			"sh", "-c", fmt.Sprintf(`
-        echo "%s" > /tmp/init.sql &&
-        sqlite3 /tmp/test.db < /tmp/init.sql &&
-        sqlite3 /tmp/test.db "%s" > /dev/stdout
-        `, initSQL, sqlQuery),
-		},
-		Tty: false,
-	}
-
+	contanerConfig := makeConfigSQL(sqlQuery, initSQL)
 	result, metrics, err := s.apiSvc.RunContainer(contanerConfig, true)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to run container: %v", err)
