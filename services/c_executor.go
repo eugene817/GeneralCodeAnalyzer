@@ -22,6 +22,29 @@ gcc /tmp/main.c -o /tmp/main.out
   }
 }
 
+func makeConfigCLint(code string) container.ContainerConfig {
+	script := fmt.Sprintf(`set -eu
+cat << 'EOF' > /tmp/main.c
+%s
+EOF
+clang -fsyntax-only /tmp/main.c
+`, code)
+	return container.ContainerConfig{
+		Image: "gcc:4.9", // в этом образе есть clang
+		Cmd:   []string{"sh", "-c", script},
+		Tty:   false,
+	}
+}
+
+func (s *Service) LintCInContainer(code string) (string, error) {
+	config := makeConfigCLint(code)
+	out, _, err := s.apiSvc.RunContainer(config, false)
+	if err != nil {
+		return "", fmt.Errorf("lint failed: %v", err)
+	}
+	return out, nil
+}
+
 func (s *Service) ExecuteCInContainer(CCode string) (string, error) {
 	contanerConfig := makeConfigC(CCode)
 	result, _, err := s.apiSvc.RunContainer(contanerConfig, false)

@@ -37,6 +37,8 @@ func (h *Handler) RegisterRoutes(e *echo.Echo) {
 	r.POST("/analyze/python", h.AnalyzeHandlerTemplatePython)
 
   r.POST("/analyze/c", h.AnalyzeHandlerTemplateC)
+  r.POST("/analyze/c/lint", h.CLintHandler)
+
 
 
 

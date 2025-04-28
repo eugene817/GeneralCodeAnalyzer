@@ -83,3 +83,31 @@ func (h *Handler) AnalyzeHandlerTemplateC(c echo.Context) error {
 	// returning result in html template
 	return c.Render(http.StatusOK, "c_analytics", data)
 }
+
+// --------- Lint ------------
+
+type CLintRequest struct {
+	CCode string `json:"c_code"`
+}
+
+// CLintResponse
+type CLintResponse struct {
+	Diagnostics string `json:"diagnostics"`
+}
+
+func (h *Handler) CLintHandler(c echo.Context) error {
+	req := new(CLintRequest)
+	if err := c.Bind(req); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid payload"})
+	}
+	diag, err := h.svc.LintCInContainer(req.CCode)
+	if err != nil {
+		log.Printf("lint error: %v", err)
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
+	if diag == "" {
+		diag = "No syntax errors."
+	}
+	return c.JSON(http.StatusOK, CLintResponse{Diagnostics: diag})
+}
+
