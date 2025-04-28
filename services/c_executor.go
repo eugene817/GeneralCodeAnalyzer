@@ -12,15 +12,17 @@ func makeConfigC(CCode string) container.ContainerConfig {
 cat << 'EOF' > /tmp/main.c
 %s
 EOF
-gcc /tmp/main.c -o /tmp/main.out
-/tmp/main.out
+gcc -std=c99 -O2 /tmp/main.c -o /tmp/main.out
+exec /tmp/main.out
 `, CCode)
-  return container.ContainerConfig{
-    Image: "gcc:4.9",
-    Cmd: []string{"sh", "-c",  script},
-    Tty: false,
-  }
+
+    return container.ContainerConfig{
+        Image: "gcc:4.9",
+        Cmd:   []string{"sh", "-c", script},
+        Tty:   false,
+    }
 }
+
 
 func makeConfigCLint(code string) container.ContainerConfig {
 	script := fmt.Sprintf(`set -eu
@@ -30,8 +32,8 @@ EOF
 clang -fsyntax-only /tmp/main.c
 `, code)
 	return container.ContainerConfig{
-		Image: "gcc:4.9", // в этом образе есть clang
-		Cmd:   []string{"sh", "-c", script},
+		Image: "silkeh/clang", 		
+    Cmd:   []string{"sh", "-c", script},
 		Tty:   false,
 	}
 }

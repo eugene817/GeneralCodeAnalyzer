@@ -1,6 +1,6 @@
 {{ block "python" . }}
 <!-- main content -->
-<main class="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8 mt-8">
+<main class="w-full max-w-5xl bg-white shadow-lg rounded-lg p-8 mt-8">
   <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Python Analyzer</h2>
 
 
@@ -8,15 +8,48 @@
   <div id="monaco-container" class="border rounded" style="width:100%; height:400px;"></div>
 
 
-  <form id="pythonForm" hx-post="/api/analyze/python" hx-target="main" hx-indicator="#loader" hx-ext="json-enc">
+  <form id="pythonForm" hx-post="/api/analyze/python" hx-target="main" hx-ext="json-enc">
     <textarea id="python_code" name="python_code" hidden>
 def add(a, b):
     return a + b
+
+
 print(f'Hello, World! and {add(2, 3)}')
     </textarea>
-     <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-      Analyze
+
+
+     <button 
+      hx-post="/api/analyze/python"
+      hx-target="main"
+      hx-ext="json-enc"
+      type="button" 
+      class="px-4 py-2 mt-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+      Dynamic Analyze
     </button>
+
+    <button 
+      hx-post="/api/analyze/python/lint"
+      hx-target="#lintResult"
+      hx-ext="json-enc"
+      type="button" 
+      class="px-4 py-2 ml-2 mt-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+      Static Analyze
+    </button>
+
+    <div 
+      id="lintResult"
+      class="
+      mt-6 
+      max-w-full               
+      overflow-x-auto          
+      bg-gray-50 p-4 rounded    
+      font-mono text-sm text-red-600 
+      ">
+      <pre class="whitespace-pre-wrap break-words">
+        <!-- server answer -->
+      </pre>
+    </div>
+
     <div class="htmx-indicator font-bold">Loading…</div>
 </main>
 
@@ -36,19 +69,22 @@ require(['vs/editor/editor.main'], function() {
     quickSuggestions: { other: true, comments: false, strings: true },
     suggestOnTriggerCharacters: true,
     autoClosingBrackets: 'always',
-    matchBrackets: 'always'
+    matchBrackets: 'always',
+    fontSize: 16,                         
+    fontFamily: 'Fira Code, monospace',
   });
 
   document.body.addEventListener('htmx:configRequest', function(evt) {
-      if (evt.target && evt.target.id === 'pythonForm') {
-        const code = editor.getValue().trim();
-        ta.value = code;
-        if (evt.detail.parameters) {
-          evt.detail.parameters['python_code'] = code;
-        }
-        console.log('[htmx:configRequest] синхронизация кода:', code);
-      }
-    });
+    const form = evt.target.closest && evt.target.closest('#pythonForm');
+    if (!form) return;
+
+    const code = editor.getValue().trim();
+    ta.value = code;
+    if (evt.detail.parameters) {
+      evt.detail.parameters['python_code'] = code;
+    }
+    console.log('[htmx:configRequest] code sync:', code);
+  });
 });
 </script>
 {{ end }}

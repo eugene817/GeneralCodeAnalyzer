@@ -34,8 +34,11 @@ func (h *Handler) RegisterRoutes(e *echo.Echo) {
 
 	r.POST("/analyze/json", h.AnalyzeHandlerAPI)
 
+  // python
 	r.POST("/analyze/python", h.AnalyzeHandlerTemplatePython)
+  r.POST("/analyze/python/lint", h.PythonLintHandler)
 
+  // c
   r.POST("/analyze/c", h.AnalyzeHandlerTemplateC)
   r.POST("/analyze/c/lint", h.CLintHandler)
 

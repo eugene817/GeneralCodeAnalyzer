@@ -51,10 +51,10 @@ func InitDB() (*gorm.DB, error) {
   }
 
   var u User
-  db.Where(User{Username: adminUser}).FirstOrCreate(&u, User{
-    Username: adminUser,
-    PasswordHash: string(hash),
-  })
+  db.
+    Where(User{Username: adminUser}).    
+    Attrs(User{PasswordHash: string(hash)}).
+    FirstOrCreate(&u)
 
   return db, nil
 }

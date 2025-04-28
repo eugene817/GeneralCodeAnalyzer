@@ -33,6 +33,8 @@ func main() {
     "python:3",
     "keinos/sqlite3",
     "gcc:4.9",
+    "silkeh/clang",
+    "luferchikz/python-flake8:latest",
   }
   
   for {

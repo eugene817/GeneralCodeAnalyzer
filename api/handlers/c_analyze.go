@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+  "html"
 
 	"github.com/eugene817/GeneralCodeAnalyzer/services"
 	"github.com/labstack/echo/v4"
@@ -96,18 +97,24 @@ type CLintResponse struct {
 }
 
 func (h *Handler) CLintHandler(c echo.Context) error {
-	req := new(CLintRequest)
-	if err := c.Bind(req); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid payload"})
-	}
-	diag, err := h.svc.LintCInContainer(req.CCode)
-	if err != nil {
-		log.Printf("lint error: %v", err)
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
-	}
-	if diag == "" {
-		diag = "No syntax errors."
-	}
-	return c.JSON(http.StatusOK, CLintResponse{Diagnostics: diag})
+    req := new(CLintRequest)
+    if err := c.Bind(req); err != nil {
+        return c.HTML(http.StatusOK,
+            `<pre class="text-red-600">Invalid payload</pre>`)
+    }
+
+    diag, err := h.svc.LintCInContainer(req.CCode)
+    if err != nil {
+        return c.HTML(http.StatusOK,
+            `<pre class="text-red-600">`+ 
+            html.EscapeString(err.Error())+`</pre>`)
+    }
+
+    if diag == "" {
+        diag = "No syntax errors."
+    }
+    return c.HTML(http.StatusOK,
+        `<pre class="text-green-600">`+
+        html.EscapeString(diag)+`</pre>`)
 }
 

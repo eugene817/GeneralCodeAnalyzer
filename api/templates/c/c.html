@@ -1,59 +1,88 @@
 {{ block "c" . }}
-<main class="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8 mt-8">
+<main class="w-full max-w-5xl bg-white shadow-lg rounded-lg p-8 mt-8">
   <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">C Analyzer</h2>
 
 
   <div id="monaco-container" class="border rounded" style="width:100%; height:400px;"></div>
 
   <form id="cForm" hx-post="/api/analyze/c" hx-target="main" hx-ext="json-enc">
-      <textarea id="c_code" name="c_code" hidden>
+    <textarea id="c_code" name="c_code" hidden>
 #include <stdio.h>
+
 int main(void) {
   printf("Hello, World!\n");
   return 0;
 }
-  </textarea>
-    <button hx-post="/api/analyze/c" hx-target="main" hx-ext="json-enc" type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+    </textarea>
+
+    <button 
+      hx-post="/api/analyze/c"
+      hx-target="main"
+      hx-ext="json-enc" 
+      type="button" 
+      class="px-4 py-2 mt-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
       Dynamic Analyze
     </button>
-     <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+
+    <button 
+      hx-post="/api/analyze/c/lint"
+      hx-target="#lintResult"
+      hx-ext="json-enc"
+      type="button" 
+      class="px-4 py-2 ml-2 mt-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
       Static Analyze
     </button>
 
+    <div 
+      id="lintResult"
+      class="
+      mt-6 
+      max-w-full               
+      overflow-x-auto          
+      bg-gray-50 p-4 rounded    
+      font-mono text-sm text-red-600 
+      ">
+      <pre class="whitespace-pre-wrap break-words">
+        <!-- server answer -->
+      </pre>
+    </div>
     <div class="htmx-indicator font-bold">Loading…</div>
   </form>
-</div>
+  </div>
 
-<script>
-require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs' }});
-require(['vs/editor/editor.main'], function() {
-  const ta = document.getElementById('c_code');
-  const container = document.getElementById('monaco-container');
-  if (!ta || !container) return console.error('Missing Monaco elements');
+  <script>
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs' }});
+  require(['vs/editor/editor.main'], function() {
+    const ta = document.getElementById('c_code');
+    const container = document.getElementById('monaco-container');
+    if (!ta || !container) return console.error('Missing Monaco elements');
 
-  const editor = monaco.editor.create(container, {
-    value: ta.value.trim(),
-    language: 'c',
-    theme: 'vs-light',
-    automaticLayout: true,
-    minimap: { enabled: true },
-    quickSuggestions: { other: true, comments: false, strings: true },
-    suggestOnTriggerCharacters: true,
-    autoClosingBrackets: 'always',
-    matchBrackets: 'always'
-  });
-
-  document.body.addEventListener('htmx:configRequest', function(evt) {
-      if (evt.target && evt.target.id === 'cForm') {
-        const code = editor.getValue().trim();
-        ta.value = code;
-        if (evt.detail.parameters) {
-          evt.detail.parameters['c_code'] = code;
-        }
-        console.log('[htmx:configRequest] синхронизация кода:', code);
-      }
+    const editor = monaco.editor.create(container, {
+      value: ta.value.trim(),
+      language: 'c',
+      theme: 'vs-light',
+      automaticLayout: true,
+      minimap: { enabled: true },
+      quickSuggestions: { other: true, comments: false, strings: true },
+      suggestOnTriggerCharacters: true,
+      autoClosingBrackets: 'always',
+      matchBrackets: 'always',
+      fontSize: 16,                         
+      fontFamily: 'Fira Code, monospace',  
     });
-});
-</script>
 
-{{ end }}
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+      const form = evt.target.closest && evt.target.closest('#cForm');
+      if (!form) return;
+
+      const code = editor.getValue().trim();
+      ta.value = code;
+      if (evt.detail.parameters) {
+        evt.detail.parameters['c_code'] = code;
+      }
+      console.log('[htmx:configRequest] code sync:', code);
+    });
+  });
+  </script>
+
+  {{ end }}
