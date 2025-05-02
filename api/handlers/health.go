@@ -5,7 +5,7 @@ import (
 )
 
 func HealthCheckHandler(c echo.Context) error {
-  return c.JSON(404, echo.Map{
+  return c.JSON(200, echo.Map{
     "status": "ok",
   })
 }
