@@ -160,24 +160,7 @@ docker-compose up --build
 Дальше я бы перешел к сервисам:
 
 ### services/
+- [[README/services.md]]
 
-Здесь находится несколько важных файлов:
-
-#### Ядро
-- `services.go`
-#### Экзекуторы (исполнители)
-- `llm_executor.go`
-- `python_executor.go`
-- `sql_executor.go`
-#### Генерация рекомендаций
-- `recommendations.go`
-#### Инструменты
-- `utils.go`
-
-
-#### Ядро
-- `services.go`
-В ядре не происходит многого, описывается импорт, интерфейс сервиса и функиця для создания его инстанции
-
-#### Экзекуторы
-- `llm_executor.go`
+### api/
+- [[README/api.md]]

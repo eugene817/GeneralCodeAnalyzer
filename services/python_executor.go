@@ -38,6 +38,23 @@ flake8 --format=default /work/script.py || true
     }
 }
 
+
+
+func (s *Service) LintPythonInContainer(code string) (string, error) {
+    config := makeConfigPythonLint(code)
+    out, _, err := s.apiSvc.RunContainer(config, false)
+    if err != nil {
+        return "", fmt.Errorf("lint failed: %v", err)
+    }
+
+    diagnostics := out
+    if diagnostics == "" {
+        diagnostics = "No linting issues found."
+    }
+
+    return diagnostics, nil
+}
+
 func (s *Service) ExecutePythonInContainer(pythonCode string) (string, error) {
 	contanerConfig := makeConfigPython(pythonCode)
 	result, _, err := s.apiSvc.RunContainer(contanerConfig, false)
@@ -61,18 +78,4 @@ func (s *Service) ExecutePythonWithMetrics(pythonCode string) (string, string, e
 }
 
 
-func (s *Service) LintPythonInContainer(code string) (string, error) {
-    config := makeConfigPythonLint(code)
-    out, _, err := s.apiSvc.RunContainer(config, false)
-    if err != nil {
-        return "", fmt.Errorf("lint failed: %v", err)
-    }
-
-    diagnostics := out
-    if diagnostics == "" {
-        diagnostics = "No linting issues found."
-    }
-
-    return diagnostics, nil
-}
 
