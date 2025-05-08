@@ -3,9 +3,9 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
-  "html"
 
 	"github.com/eugene817/GeneralCodeAnalyzer/services"
 	"github.com/labstack/echo/v4"
@@ -84,36 +84,30 @@ func (h *Handler) AnalyzeHandlerTemplatePython(c echo.Context) error {
 	return c.Render(http.StatusOK, "python_analytics", data)
 }
 
-
 // --------- Lint ------------
 
 type PythonLintRequest struct {
 	PythonCode string `json:"python_code"`
 }
 
-// PythonLintResponse
-type PythonLintResponse struct {
-	Diagnostics string `json:"diagnostics"`
-}
-
 func (h *Handler) PythonLintHandler(c echo.Context) error {
-    req := new(PythonLintRequest)
-    if err := c.Bind(req); err != nil {
-        return c.HTML(http.StatusOK,
-            `<pre class="text-red-600">Invalid payload</pre>`)
-    }
+	req := new(PythonLintRequest)
+	if err := c.Bind(req); err != nil {
+		return c.HTML(http.StatusOK,
+			`<pre class="text-red-600">Invalid payload</pre>`)
+	}
 
-    diag, err := h.svc.LintPythonInContainer(req.PythonCode)
-    if err != nil {
-        return c.HTML(http.StatusOK,
-            `<pre class="text-red-600">`+ 
-            html.EscapeString(err.Error())+`</pre>`)
-    }
+	diag, err := h.svc.LintPythonInContainer(req.PythonCode)
+	if err != nil {
+		return c.HTML(http.StatusOK,
+			`<pre class="text-red-600">`+
+				html.EscapeString(err.Error())+`</pre>`)
+	}
 
-    if diag == "" {
-        diag = "No syntax errors."
-    }
-    return c.HTML(http.StatusOK,
-        `<pre class="text-green-600">`+
-        html.EscapeString(diag)+`</pre>`)
+	if diag == "" {
+		diag = "No syntax errors."
+	}
+	return c.HTML(http.StatusOK,
+		`<pre class="text-green-600">`+
+			html.EscapeString(diag)+`</pre>`)
 }

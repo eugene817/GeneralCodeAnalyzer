@@ -36,12 +36,6 @@ func (h *Handler) AnalyzeData(req AnalyzeRequest) (Data, error) {
 		return Data{}, err
 	}
 
-	// SQL (not used yet)
-	_, err = h.svc.ExecuteSQLInContainer(req.SQLQuery, req.InitSQL)
-	if err != nil {
-		return Data{}, err
-	}
-
 	// request analysis
 	analysis, err := h.svc.AnalyzeQueryInContainer(req.SQLQuery, req.InitSQL)
 	if err != nil {
