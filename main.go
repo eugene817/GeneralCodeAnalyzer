@@ -14,49 +14,46 @@ import (
 	"github.com/eugene817/GeneralCodeAnalyzer/database"
 	"github.com/eugene817/GeneralCodeAnalyzer/services"
 	"github.com/labstack/echo/v4"
-
-
 )
 
 func main() {
 
-  mgr, err := container.NewDockerManager()
+	mgr, err := container.NewDockerManager()
 	if err != nil {
 		fmt.Errorf("failed to create Docker manager: %v", err)
-    os.Exit(1)
+		os.Exit(1)
 	}
 
 	mng := api.NewAPI(mgr)
 
-  // Ensure the images are available
-  Images := []string{
-    "python:3",
-    "keinos/sqlite3",
-    "gcc:4.9",
-    "silkeh/clang",
-    "luferchikz/python-flake8:latest",
-  }
-  
-  for {
-        if err := mng.Ping(); err == nil {
-            break
-        }
-        log.Println("waiting for Docker daemon…")
-        time.Sleep(1500 * time.Millisecond)
-  }
+	// Ensure the images are available
+	Images := []string{
+		"python:3",
+		"keinos/sqlite3",
+		"gcc:4.9",
+		"silkeh/clang",
+		"luferchikz/python-flake8:latest",
+	}
 
-  if err := mng.EnsureImages(Images); err != nil {
-    log.Fatalf("failed to pull initial images: %v", err)    
-    os.Exit(1)
-  }
+	for {
+		if err := mng.Ping(); err == nil {
+			break
+		}
+		log.Println("waiting for Docker daemon…")
+		time.Sleep(1500 * time.Millisecond)
+	}
+
+	if err := mng.EnsureImages(Images); err != nil {
+		log.Fatalf("failed to pull initial images: %v", err)
+		os.Exit(1)
+	}
 
 	e := echo.New()
-  db, err := database.InitDB()
+	db, err := database.InitDB()
 
-  
-  svc := services.NewService(mng)
-  h := handlers.NewHandler(svc, db)
-  h.RegisterRoutes(e)
+	svc := services.NewService(mng)
+	h := handlers.NewHandler(svc, db)
+	h.RegisterRoutes(e)
 
 	templates.RegisterTemplatesRoutes(e)
 	e.Static("/static", "./api/static")
