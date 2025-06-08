@@ -51,7 +51,7 @@ func (h *Handler) CAnalyzeData(req CAnalyzeRequest) (CData, error) {
 		LLMAnswer:       "",
 	}
 
-	model := "codellama1234"
+	model := "codegemma"
 	// model := "deepseek-r1:1.5b"
 	llmanswer, err := services.QueryOllama(GeneratePromptC(d, req.CCode), model)
 	if err != nil {

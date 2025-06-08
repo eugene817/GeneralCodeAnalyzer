@@ -5,7 +5,7 @@ go 1.23.3
 replace github.com/docker/docker => github.com/docker/docker v28.0.1+incompatible
 
 require (
-	github.com/eugene817/Cowdocs v1.5.19
+	github.com/eugene817/Cowdocs v1.5.21
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-jwt/v4 v4.3.1

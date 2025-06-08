@@ -20,6 +20,16 @@ services:
     volumes:
       - dind_storage:/var/lib/docker
 
+  # ollama:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.ollama
+  #   ports:
+  #     - "11434:11434"
+  #   depends_on:
+  #     - dind
+  #     - db
+
   # App 
   app:
     build:
@@ -29,6 +39,7 @@ services:
     depends_on:
       - db
       - dind
+      # - ollama
     environment:
       DOCKER_HOST: tcp://dind:2375
       PORT: "8080"
@@ -38,8 +49,13 @@ services:
       DB_NAME: gca
       DB_PORT: "5432"
       DB_TIMEZONE: Europe/Warsaw
+      OLLAMA_URL: "http://ollama:11434"
     ports:
       - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
   adminer:
     image: adminer
     restart: always
@@ -51,3 +67,4 @@ volumes:
   db_data:
   dind_storage:
 
+ 

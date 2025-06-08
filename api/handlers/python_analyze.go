@@ -51,11 +51,11 @@ func (h *Handler) PythonAnalyzeData(req PythonAnalyzeRequest) (PythonData, error
 		LLMAnswer:       "",
 	}
 
-	model := "codellama1234"
+	model := "codegemma"
 	// model := "deepseek-r1:1.5b"
 	llmanswer, err := services.QueryOllama(GeneratePromptPython(d, req.PythonCode), model)
 	if err != nil {
-		fmt.Println("OMG!! Error in QueryOllama")
+    fmt.Println("OMG!! Error in QueryOllama: %v", err)
 	}
 
 	return PythonData{

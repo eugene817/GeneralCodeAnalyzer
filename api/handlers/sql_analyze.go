@@ -53,7 +53,7 @@ func (h *Handler) AnalyzeData(req AnalyzeRequest) (Data, error) {
 		LLMAnswer:       "",
 	}
 
-	model := "codellama12345"
+	model := "codegemma"
 	// model := "deepseek-r1:1.5b"
 	llmanswer, err := services.QueryOllama(GeneratePrompt(d, req.InitSQL, req.SQLQuery), model)
 	if err != nil {

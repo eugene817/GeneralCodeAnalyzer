@@ -59,6 +59,10 @@ github.com/eugene817/Cowdocs v1.5.18 h1:ojoRn59h7PRFJogj67utZLy+O9dzPXAjCE+0ONgM
 github.com/eugene817/Cowdocs v1.5.18/go.mod h1:hhqRzf3VmXv6eVZQYxJLSiNlSKogL26XC2YLPr/kPYg=
 github.com/eugene817/Cowdocs v1.5.19 h1:0Xt9rMdAA2v62tmWDOSLSBrJzlqR/dtAuQ5fOodoQRw=
 github.com/eugene817/Cowdocs v1.5.19/go.mod h1:hhqRzf3VmXv6eVZQYxJLSiNlSKogL26XC2YLPr/kPYg=
+github.com/eugene817/Cowdocs v1.5.20 h1:EnFDxWZYlN321Q6+WqcN2wkO+5sOj3+eHqxSx41HSSM=
+github.com/eugene817/Cowdocs v1.5.20/go.mod h1:hhqRzf3VmXv6eVZQYxJLSiNlSKogL26XC2YLPr/kPYg=
+github.com/eugene817/Cowdocs v1.5.21 h1:OeIevV3Oykz2rlnOXP30DF59yk1+PKPeQu7atev9HlA=
+github.com/eugene817/Cowdocs v1.5.21/go.mod h1:hhqRzf3VmXv6eVZQYxJLSiNlSKogL26XC2YLPr/kPYg=
 github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=

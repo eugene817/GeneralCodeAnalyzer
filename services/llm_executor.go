@@ -22,8 +22,7 @@ type GenerateResponse struct {
 }
 
 func QueryOllama(prompt, model string) (string, error) {
-	url := "http://localhost:11434/api/generate"
-
+	url := "http://ollama:11434/v1/completions"
 	// Formating the request body 
 	reqBody := GenerateRequest{
 		Model:  model,

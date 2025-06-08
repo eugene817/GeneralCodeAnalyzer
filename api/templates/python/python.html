@@ -7,38 +7,35 @@
 
   <div id="monaco-container" class="border rounded" style="width:100%; height:400px;"></div>
 
-
   <form id="pythonForm" hx-post="/api/analyze/python" hx-target="main" hx-ext="json-enc">
     <textarea id="python_code" name="python_code" hidden>
-def add(a, b):
-    return a + b
+def add(a):
+  if a == 0:
+    return 1
+  return a * add(a-1)
 
+def macierz(m, n):
+  return [[1] * m] * n
 
-print(f'Hello, World! and {add(2, 3)}')
+print(f'{add(100)}')
+for row in macierz(10,10):
+  print(row)
     </textarea>
 
 
-     <button 
-      hx-post="/api/analyze/python"
-      hx-target="main"
-      hx-ext="json-enc"
-      type="button" 
+
+
+    <button hx-post="/api/analyze/python" hx-target="main" hx-ext="json-enc" type="button"
       class="px-4 py-2 mt-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
       Dynamic Analyze
     </button>
 
-    <button 
-      hx-post="/api/analyze/python/lint"
-      hx-target="#lintResult"
-      hx-ext="json-enc"
-      type="button" 
+    <button hx-post="/api/analyze/python/lint" hx-target="#lintResult" hx-ext="json-enc" type="button"
       class="px-4 py-2 ml-2 mt-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
       Static Analyze
     </button>
 
-    <div 
-      id="lintResult"
-      class="
+    <div id="lintResult" class="
       mt-6 
       max-w-full               
       overflow-x-auto          
@@ -54,37 +51,37 @@ print(f'Hello, World! and {add(2, 3)}')
 </main>
 
 <script>
-require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs' }});
-require(['vs/editor/editor.main'], function() {
-  const ta = document.getElementById('python_code');
-  const container = document.getElementById('monaco-container');
-  if (!ta || !container) return console.error('Missing Monaco elements');
+  require.config({paths: {vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.46.0/min/vs'}});
+  require(['vs/editor/editor.main'], function () {
+    const ta = document.getElementById('python_code');
+    const container = document.getElementById('monaco-container');
+    if (!ta || !container) return console.error('Missing Monaco elements');
 
-  const editor = monaco.editor.create(container, {
-    value: ta.value.trim(),
-    language: 'python',
-    theme: 'vs-light',
-    automaticLayout: true,
-    minimap: { enabled: true },
-    quickSuggestions: { other: true, comments: false, strings: true },
-    suggestOnTriggerCharacters: true,
-    autoClosingBrackets: 'always',
-    matchBrackets: 'always',
-    fontSize: 16,                         
-    fontFamily: 'Fira Code, monospace',
+    const editor = monaco.editor.create(container, {
+      value: ta.value.trim(),
+      language: 'python',
+      theme: 'vs-light',
+      automaticLayout: true,
+      minimap: {enabled: true},
+      quickSuggestions: {other: true, comments: false, strings: true},
+      suggestOnTriggerCharacters: true,
+      autoClosingBrackets: 'always',
+      matchBrackets: 'always',
+      fontSize: 16,
+      fontFamily: 'Fira Code, monospace',
+    });
+
+    document.body.addEventListener('htmx:configRequest', function (evt) {
+      const form = evt.target.closest && evt.target.closest('#pythonForm');
+      if (!form) return;
+
+      const code = editor.getValue().trim();
+      ta.value = code;
+      if (evt.detail.parameters) {
+        evt.detail.parameters['python_code'] = code;
+      }
+      console.log('[htmx:configRequest] code sync:', code);
+    });
   });
-
-  document.body.addEventListener('htmx:configRequest', function(evt) {
-    const form = evt.target.closest && evt.target.closest('#pythonForm');
-    if (!form) return;
-
-    const code = editor.getValue().trim();
-    ta.value = code;
-    if (evt.detail.parameters) {
-      evt.detail.parameters['python_code'] = code;
-    }
-    console.log('[htmx:configRequest] code sync:', code);
-  });
-});
 </script>
 {{ end }}
