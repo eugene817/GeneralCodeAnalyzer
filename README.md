@@ -1,166 +1,35 @@
-# General Code Analyzer
+# General Code Analyzer 🚀
 
-- This is my diploma project
+A high-performance automated source code analysis platform designed for statistical, syntactic, and dynamic analysis of SQL and backend code. Built with **Go (Golang)**, **Echo**, **HTMX**, and **Docker-in-Docker (DinD)** architecture, this platform isolates code execution environments to provide performance benchmarks, static code analysis (linters), and AI-driven optimizations.
 
-The core functionality is to analyze SQL code with statistical and dynamic analyzis,
-The whole diploma project is gonna be here (in polish and english languages)
+---
 
-## The idea
+## 💡 The Idea & Vision
 
-The idea is to make general code analyzer, maybe after that train ai models to recognise
-"ideal code" and to make life of begginer programmers eazier
+The core objective is to build a unified system capable of executing, profiling, and analyzing user-submitted code in completely isolated sandboxes. By capturing dynamic runtime metrics (CPU, memory footprints, execution time) and static analytics, the platform helps beginner developers understand resource constraints and guides them toward writing optimized, production-grade code. 
 
+Future milestones include training customized LLM/AI models to identify structural patterns and recommend architectural improvements based on collected execution statistics.
 
-## How to run
+---
 
-Simply run:
+## 🛠 Tech Stack
 
-```bash
-docker-compose up --build
-```
+- **Backend Core:** Go (Golang) 1.23, Echo Web Framework
+- **Dynamic Frontend:** UI rendered serverside with Go Templates, styled via TailwindCSS, and powered by HTMX for smooth, asynchronous SPA-like interactions without heavy JS frameworks.
+- **Database:** PostgreSQL (with migration layers and schema models)
+- **Infrastructure & Sandboxing:** Docker Engine API, Docker-in-Docker (DinD), Multi-stage Docker optimization.
 
+---
 
-# Docs
+## 🏗 Repository Structure & Architecture
 
-@ru
-
-Общее описание
-## Файлы и директории:
-
-> Директории
-
-- `api/` - В этой директории находится очень важная для работы приложения логика,
-а именно:
-    - `handlers/` - здесь файлы обработки запросов и регистрации роутеров
-    - `static/` - здесь все статические файлы, в частности `input.css` с директивами `tailwindcss`
-    и `styles.css` уже готовый файл `tailwindcss` для покдлючения
-    - `templates/` - здесь файлы шаблонов и полноценные файлы `html` для возвращения их как ответа,
-    вместо полноценного фронтенда. Так же здесь находятся файлы `.go` для вспомогательных функций обработки
-    шаблонов и регистрации роутера для получения ендпоинтов этих шаблонов
-
-- `config/` - Здесь находится файл `app.go`, где хранится конфигурация приложения, в частности порт на котором будет
-работать приложение
-
-- `database/` - Здесь находятся файлы для работы с базой данных, а именно создание "Моделей" для хранения в базе данных,
-инициализация базы данных, а так же инициализация миграций и первых данных, таких как логин и пароль админа
-
-- `services/` - Грубо говоря это сердце приложения (не считая библиотеки `Cowdocs`), где происходит вся обработка данных,
-это сервисы запуска нужных контейнеров с ЯП, запросов к LLM, генерация ответов и рекомендаций в опоре на статистику контейнеров,
-определение утилит нужных для сервисов 
-
-> Файлы
-
-- `docker-compose.yml` - один из важнейших файлов всего приложения, он описывает запуск приложения с учетом внешних сервисов и контейнеров
-подключает контейнер базы данных, запускает сервис `dind` и устанавливает нужные переменные окружения. Так называемый оркестратор в чистом виде.
-всего 3 сервиса для запуска: `db` - база данных (в этом случае postgres), `dind` - docker in docker сервис, который и позволяет приложению запущенному
-в контейнере создавать запускать и управлять другими контейнерами, и `app` - само приложение, контейнер которогро определен в следующем файле.
-
-- `Dockerfile` - это определение того каким образом приложение (web анализатор кода) будет собрано в контейнер для удобной работы:
-    Первый этап - build `golang:1.23-alpine`
-    1. Сначала происходит установка нужных зависимостей внутри контейнера, помимо того что первый этап это образ контейнера уже имеющий установленным
-    компилятор `go`. Образ `golang:1.23-alpine` был выбран не случайно, постфикс alpine гарантирует то что контейнер займет минимальное кол-во памяти,
-    а версия 1.23, соответствует версии go на которой было написано приложение
-    2. Происходит копирование всех файлов из корня приложения в контейнер
-    3. Идет компиляция `tailwindcss` в выход в виде `styles.css` и компиляция `main.go` в исполнитеьный файл `app` который можно запустить
-    Второй этап - run `alpine:3.18`
-    1. Сначала устанавливаются нужные зависимости для запуска (в частности инструменты нужные для работы статического анализа, так называемые линтеры)
-    2. Копирование нужных файлов из контейнера build в контейнер run, контейнер run в свою очередь является обычным линуксом и опять же версии alpine чтобы
-    занять как можно меньше места. Разделение запуска приложения на два этапа позволяет в runtime иметь контейнер с обычным линуксом, который не имеет инструментов
-    для компиляции, чтобы оптимизировать расход памяти
-    3. Идет запуск приложения через `./app`
-
-
-- `go.mod` - это файл определяющий зависимости проекта, он содержит в себе все внешние библиотеки и модули нужные для работы go приложения,
-автоматически генерируется с помощью `go mod init название_проекта` и обновляется, зачастую через `go mod tidy` - автоматически смотрит все нужные
-и использованые библиотеки, если надо - скачивает
-
-- `go.sum` - это файл похож на `go.mod`, но хранит контрольные суммы модулей и библиотек для подтверждения их целостности и подлинности
-
-- `package-lock.json` - альтернатива `go.mod` только для `nodejs` (использующегося для tailwindcss)
-- `package.json` - описание проекта со стороны `nodejs`
-
-- `tailwind.config.js` - конфигурация `tailwindcss`
-
-Начнем распутывать это запутанное и очень абстрактное приложение с `main.go`
-
-### `main.go` 
-
-Это файл который практически является "высокоуровневым сердцем" приложения
-
-Что здесь происходит:
-
-0. Описание импортов внешних библиотек и так называемого `package`, который нужен для работы с теми же импортами
-
-#### func main()
-
-1. Инициализация мэнеджера из библиотеки `Cowdocs` (перейдем к этому позже) и создание инстанции API
-```go
-  mgr, err := container.NewDockerManager()
-	if err != nil {
-		fmt.Errorf("failed to create Docker manager: %v", err)
-    os.Exit(1)
-	}
-  mng := api.NewAPI(mgr)
-```
-
-2. Проверка наличия нужных контейнеров для работы приложения (внутри если их нет, они устанавливаются)
-```go
-  // Ensure the images are available
-  Images := []string{
-    "python:3",
-    "keinos/sqlite3",
-  }
-  
-  for {
-        if err := mng.Ping(); err == nil {
-            break
-        }
-        log.Println("waiting for Docker daemon…")
-        time.Sleep(1500 * time.Millisecond)
-  }
-
-  if err := mng.EnsureImages(Images); err != nil {
-    log.Fatalf("failed to pull initial images: %v", err)    
-    os.Exit(1)
-  }
-```
-В цикле for в свою очередь происходит очень интересная вещь, поскольку приложение запускается
-через `docker-compose`, то `docker-compose` должен как-то обслужить создание и запуск новых контейнеров
-внутри себя. Для этого существует модуль `dind` - docker in docker, ожидание запуска которого и происходит
-в цикле for
-
-
-3. Создание инстанции главного интерфейса web-фреймворка `Echo` и инициализация базы данных
-```go
-  e := echo.New()
-  db, err := database.InitDB()
-```
-
-4. Создание инстанции интерфейса сервиса `svc` и инстанции обработчика `h`, а после запускается
-функция регистрации маршрутов через обработчик
-```go
-  svc := services.NewService(mng)
-  h := handlers.NewHandler(svc, db)
-  h.RegisterRoutes(e)
-```
-
-5. Поскольку приложение не имеет "полноценного" фронтенда, а работает на `html`, `tailwindcss`, `htmx`
-то требуется обработка статических файлов (в данном случае стилей) и шаблонов `html`. Что и происходит здесь:
-```go
-	templates.RegisterTemplatesRoutes(e)
-	e.Static("/static", "./api/static")
-```
-
-6. Ну и поскольку приложение запускается через фреймворк `Echo`, то здесь происходит его запуск:
-```go
-	port := config.GetPort()
-	e.Logger.Fatal(e.Start(port))
-```
-
-Дальше я бы перешел к сервисам:
-
-### services/
-- [[README/services.md]]
-
-### api/
-- [[README/api.md]]
+```text
+├── api/
+│   ├── handlers/   # HTTP request lifecycles, route registration & input validation
+│   ├── static/     # Asset pipeline (compiled TailwindCSS styles)
+│   └── templates/  # Go html/template files driven by HTMX endpoints
+├── config/         # Application bootstrap configurations & environment management
+├── database/       # DB initialization, ORM models, and automatic migration layers
+├── services/       # Core business logic: container orchestration, LLM interfacing, analytics
+├── Dockerfile      # Highly optimized, multi-stage production container definition
+└── main.go         # Application bootstrap & high-level infrastructure orchestration
